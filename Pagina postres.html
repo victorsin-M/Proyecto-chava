@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Maison Dulce — Pastelería de Autor</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --cream:    #faf5ee;
+    --parchment:#f0e6d3;
+    --caramel:  #c8893a;
+    --choco:    #2c1a0e;
+    --choco2:   #3d2510;
+    --blush:    #e8bfa0;
+    --sage:     #8a9e7e;
+    --text:     #1e1208;
+    --muted:    #8a7560;
+    --gold:     #d4a843;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--text);
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor {
+    width: 12px; height: 12px;
+    background: var(--caramel);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s, background 0.2s;
+    mix-blend-mode: multiply;
+  }
+
+  #cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--caramel);
+    border-radius: 50%;
+    position: fixed;
+    top: 0; left: 0;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.35s ease, width 0.3s, height 0.3s, opacity 0.3s;
+    opacity: 0.6;
+  }
+
+  body.hovering #cursor { transform: scale(2.5); background: var(--gold); }
+  body.hovering #cursor-ring { width: 60px; height: 60px; opacity: 0.3; }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 500;
+    padding: 0 5vw;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: background 0.4s, box-shadow 0.4s;
+  }
+
+  nav.scrolled {
+    background: rgba(250,245,238,0.92);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 1px 0 rgba(0,0,0,0.07);
+  }
+
+  .nav-logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: var(--choco);
+    text-transform: uppercase;
+  }
+
+  .nav-logo span { color: var(--caramel); }
+
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    text-decoration: none;
+    color: var(--choco);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 400;
+    position: relative;
+  }
+
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -3px; left: 0; right: 100%;
+    height: 1px;
+    background: var(--caramel);
+    transition: right 0.3s;
+  }
+
+  .nav-links a:hover::after { right: 0; }
+
+  .nav-cart {
+    background: var(--choco);
+    color: var(--cream);
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+  }
+
+  .nav-cart:hover { background: var(--caramel); }
+
+  .cart-count {
+    background: var(--caramel);
+    color: #fff;
+    width: 20px; height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.7rem;
+    font-weight: 500;
+    transition: transform 0.3s;
+  }
+
+  .cart-count.bump { animation: bump 0.3s ease; }
+  @keyframes bump { 0%,100%{transform:scale(1)} 50%{transform:scale(1.5)} }
+
+  /* HERO */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 120px 5vw 80px 8vw;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.72rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--caramel);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(3rem, 5vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    color: var(--choco);
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--caramel);
+    display: block;
+  }
+
+  .hero-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.8;
+    max-width: 380px;
+    margin-bottom: 44px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+
+  .btn-primary {
+    background: var(--choco);
+    color: var(--cream);
+    border: none;
+    padding: 16px 36px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.25s, transform 0.2s;
+  }
+
+  .btn-primary:hover { background: var(--caramel); transform: translateY(-2px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--choco);
+    border: 1px solid var(--choco);
+    padding: 16px 36px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.78rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.25s;
+  }
+
+  .btn-outline:hover { background: var(--choco); color: var(--cream); }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-mosaic {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    height: 100%;
+    gap: 4px;
+  }
+
+  .mosaic-tile {
+    overflow: hidden;
+    position: relative;
+  }
+
+  .mosaic-tile img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 8s ease;
+    transform: scale(1.05);
+  }
+
+  .mosaic-tile:hover img { transform: scale(1.12); }
+
+  .mosaic-tile::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(44,26,14,0.15), transparent);
+  }
+
+  /* MARQUEE */
+  .marquee-bar {
+    background: var(--choco);
+    color: var(--cream);
+    padding: 14px 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .marquee-track {
+    display: inline-block;
+    animation: marquee 22s linear infinite;
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .marquee-track span { margin: 0 28px; color: var(--caramel); }
+
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  /* SECTION COMMONS */
+  section { padding: 100px 8vw; }
+
+  .section-eyebrow {
+    font-size: 0.7rem;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--caramel);
+    margin-bottom: 12px;
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3.2rem);
+    font-weight: 700;
+    color: var(--choco);
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+
+  .section-title em { font-style: italic; color: var(--caramel); }
+
+  .section-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--muted);
+    max-width: 500px;
+    line-height: 1.7;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: var(--caramel);
+    margin: 28px 0;
+  }
+
+  /* FEATURES */
+  #features {
+    background: var(--choco);
+    color: var(--cream);
+    padding: 80px 8vw;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.08);
+    margin-top: 60px;
+  }
+
+  .feature-item {
+    padding: 48px 36px;
+    background: var(--choco);
+    text-align: center;
+    transition: background 0.3s;
+  }
+
+  .feature-item:hover { background: var(--choco2); }
+
+  .feature-icon {
+    font-size: 2.2rem;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .feature-item h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--blush);
+  }
+
+  .feature-item p {
+    font-size: 0.83rem;
+    color: rgba(250,245,238,0.5);
+    line-height: 1.7;
+    letter-spacing: 0.3px;
+  }
+
+  /* MENU */
+  #menu { background: var(--cream); }
+
+  .menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 56px;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .filter-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .filter-tab {
+    padding: 8px 20px;
+    border: 1px solid var(--choco);
+    background: transparent;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: none;
+    transition: all 0.2s;
+    color: var(--choco);
+  }
+
+  .filter-tab.active, .filter-tab:hover {
+    background: var(--choco);
+    color: var(--cream);
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 32px;
+  }
+
+  .product-card {
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  .product-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.5s ease, transform 0.5s ease, box-shadow 0.3s;
+  }
+
+  .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 60px rgba(44,26,14,0.12);
+  }
+
+  .product-img {
+    width: 100%;
+    aspect-ratio: 4/3;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.6s;
+  }
+
+  .product-card:hover .product-img { transform: scale(1.05); }
+
+  .product-badge {
+    position: absolute;
+    top: 16px; left: 16px;
+    background: var(--caramel);
+    color: #fff;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+  }
+
+  .product-info {
+    padding: 22px 22px 20px;
+  }
+
+  .product-cat {
+    font-size: 0.68rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 6px;
+  }
+
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--choco);
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .product-desc {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 18px;
+  }
+
+  .product-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .product-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--choco);
+  }
+
+  .product-price sup {
+    font-size: 0.7rem;
+    font-weight: 400;
+    vertical-align: super;
+    margin-right: 2px;
+  }
+
+  .btn-add {
+    width: 40px; height: 40px;
+    background: var(--choco);
+    border: none;
+    color: var(--cream);
+    font-size: 1.2rem;
+    cursor: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+  }
+
+  .btn-add:hover { background: var(--caramel); transform: scale(1.1); }
+  .btn-add:active { transform: scale(0.95); }
+
+  /* ABOUT */
+  #about {
+    background: var(--parchment);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    padding: 100px 8vw;
+  }
+
+  .about-img-wrap {
+    position: relative;
+  }
+
+  .about-img-wrap img {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    display: block;
+  }
+
+  .about-img-accent {
+    position: absolute;
+    bottom: -24px; right: -24px;
+    width: 160px; height: 160px;
+    background: var(--choco);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--cream);
+  }
+
+  .about-img-accent .num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    font-weight: 800;
+    color: var(--caramel);
+    line-height: 1;
+  }
+
+  .about-img-accent p {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(250,245,238,0.7);
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* TESTIMONIALS */
+  #testimonials {
+    background: var(--choco);
+    color: var(--cream);
+    text-align: center;
+  }
+
+  #testimonials .section-title { color: var(--cream); }
+
+  .testimonials-slider {
+    margin-top: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .testimonials-track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .testimonial-slide {
+    min-width: 100%;
+    padding: 0 10vw;
+  }
+
+  .testi-quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.2rem, 2.5vw, 1.7rem);
+    line-height: 1.7;
+    color: rgba(250,245,238,0.85);
+    margin-bottom: 32px;
+  }
+
+  .testi-author {
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--caramel);
+  }
+
+  .testi-stars { color: var(--gold); font-size: 0.9rem; margin-bottom: 24px; }
+
+  .testi-nav {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 40px;
+  }
+
+  .testi-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(250,245,238,0.25);
+    border: none;
+    cursor: none;
+    transition: background 0.3s, transform 0.3s;
+    padding: 0;
+  }
+
+  .testi-dot.active {
+    background: var(--caramel);
+    transform: scale(1.3);
+  }
+
+  /* CONTACT/ORDER */
+  #contact {
+    background: var(--cream);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: start;
+    padding: 100px 8vw;
+  }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-field label {
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid rgba(44,26,14,0.2);
+    padding: 10px 0;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text);
+    transition: border-color 0.2s;
+    outline: none;
+    cursor: none;
+  }
+
+  .form-field input:focus,
+  .form-field select:focus,
+  .form-field textarea:focus {
+    border-color: var(--caramel);
+  }
+
+  .form-field textarea { resize: vertical; min-height: 80px; }
+
+  .form-submit {
+    margin-top: 8px;
+    align-self: flex-start;
+  }
+
+  /* CART SIDEBAR */
+  #cart-overlay {
+    position: fixed; inset: 0;
+    background: rgba(28,16,8,0.5);
+    z-index: 800;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  #cart-overlay.open { opacity: 1; pointer-events: all; }
+
+  #cart-sidebar {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 420px;
+    max-width: 95vw;
+    background: var(--cream);
+    z-index: 801;
+    transform: translateX(100%);
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  #cart-sidebar.open { transform: translateX(0); }
+
+  .cart-header {
+    padding: 28px 28px 20px;
+    border-bottom: 1px solid var(--parchment);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .cart-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--choco);
+  }
+
+  .cart-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: none;
+    color: var(--muted);
+    transition: color 0.2s;
+  }
+
+  .cart-close:hover { color: var(--choco); }
+
+  .cart-items {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 28px;
+  }
+
+  .cart-empty {
+    text-align: center;
+    padding: 60px 0;
+    color: var(--muted);
+  }
+
+  .cart-empty .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+  .cart-empty p { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 1rem; }
+
+  .cart-item {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--parchment);
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateX(20px)} to{opacity:1;transform:none} }
+
+  .cart-item img {
+    width: 64px; height: 64px;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .cart-item-info { flex: 1; }
+
+  .cart-item-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--choco);
+    margin-bottom: 4px;
+  }
+
+  .cart-item-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+
+  .qty-btn {
+    width: 26px; height: 26px;
+    background: var(--parchment);
+    border: none;
+    cursor: none;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    color: var(--choco);
+  }
+
+  .qty-btn:hover { background: var(--caramel); color: #fff; }
+
+  .qty-num {
+    font-weight: 500;
+    font-size: 0.9rem;
+    min-width: 20px;
+    text-align: center;
+  }
+
+  .cart-item-price {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--choco);
+    align-self: center;
+  }
+
+  .cart-item-remove {
+    background: none;
+    border: none;
+    cursor: none;
+    color: var(--muted);
+    font-size: 0.8rem;
+    transition: color 0.2s;
+    align-self: flex-start;
+  }
+
+  .cart-item-remove:hover { color: #c0392b; }
+
+  .cart-footer {
+    padding: 20px 28px 28px;
+    border-top: 1px solid var(--parchment);
+  }
+
+  .cart-subtotal {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .cart-total {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--choco);
+    padding-top: 12px;
+    border-top: 1px solid var(--parchment);
+  }
+
+  .btn-checkout {
+    width: 100%;
+    background: var(--choco);
+    color: var(--cream);
+    border: none;
+    padding: 16px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.25s;
+  }
+
+  .btn-checkout:hover { background: var(--caramel); }
+
+  /* FOOTER */
+  footer {
+    background: var(--choco);
+    color: rgba(250,245,238,0.65);
+    padding: 60px 8vw 30px;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 48px;
+    margin-bottom: 48px;
+  }
+
+  .footer-brand h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--cream);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .footer-brand h3 span { color: var(--caramel); }
+
+  .footer-brand p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 260px;
+  }
+
+  .footer-col h4 {
+    font-size: 0.68rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--caramel);
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+  .footer-col a {
+    text-decoration: none;
+    color: rgba(250,245,238,0.55);
+    font-size: 0.85rem;
+    transition: color 0.2s;
+  }
+
+  .footer-col a:hover { color: var(--caramel); }
+
+  .footer-bottom {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(250,245,238,0.3);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  /* TOAST NOTIFICATION */
+  #toast-notif {
+    position: fixed;
+    bottom: 32px; left: 50%;
+    transform: translateX(-50%) translateY(80px);
+    background: var(--choco);
+    color: var(--cream);
+    padding: 14px 28px;
+    font-size: 0.82rem;
+    letter-spacing: 1px;
+    z-index: 900;
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  #toast-notif.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  /* FADE UP ANIMATION */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    #hero { grid-template-columns: 1fr; }
+    .hero-right { height: 50vw; }
+    .hero-left { padding: 120px 6vw 60px; }
+    #about { grid-template-columns: 1fr; }
+    #contact { grid-template-columns: 1fr; }
+    .features-grid { grid-template-columns: 1fr 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .nav-links { display: none; }
+  }
+
+  @media (max-width: 600px) {
+    .features-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <div class="nav-logo">Maison <span>Dulce</span></div>
+  <ul class="nav-links">
+    <li><a href="#menu">Menú</a></li>
+    <li><a href="#about">Nosotros</a></li>
+    <li><a href="#testimonials">Reseñas</a></li>
+    <li><a href="#contact">Pedidos</a></li>
+  </ul>
+  <button class="nav-cart" onclick="toggleCart()">
+    🛒 Carrito
+    <span class="cart-count" id="cartCount">0</span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <p class="hero-eyebrow">✦ Pastelería de Autor · Guadalajara</p>
+    <h1 class="hero-title">
+      El arte de lo<br>
+      <em>irresistible</em>
+    </h1>
+    <p class="hero-sub">Postres artesanales elaborados con ingredientes de origen, cada pieza es una experiencia sensorial única.</p>
+    <div class="hero-ctas">
+      <button class="btn-primary" onclick="scrollTo({top:document.getElementById('menu').offsetTop-60,behavior:'smooth'})">Ver Menú</button>
+      <button class="btn-outline" onclick="scrollTo({top:document.getElementById('contact').offsetTop-60,behavior:'smooth'})">Hacer Pedido</button>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-bg-mosaic">
+      <div class="mosaic-tile"><img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80" alt="Pastel"/></div>
+      <div class="mosaic-tile"><img src="https://images.unsplash.com/photo-1488477181946-6428a0291777?w=600&q=80" alt="Macarons"/></div>
+      <div class="mosaic-tile"><img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600&q=80" alt="Croissants"/></div>
+      <div class="mosaic-tile"><img src="https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=600&q=80" alt="Postres"/></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-bar">
+  <div class="marquee-track" id="marqueeTrack">
+    Pastelería Artesanal <span>✦</span> Ingredientes de Origen <span>✦</span> Pedidos Especiales <span>✦</span> Entrega a Domicilio <span>✦</span> Sin Conservadores <span>✦</span> Recetas Únicas <span>✦</span>
+    Pastelería Artesanal <span>✦</span> Ingredientes de Origen <span>✦</span> Pedidos Especiales <span>✦</span> Entrega a Domicilio <span>✦</span> Sin Conservadores <span>✦</span> Recetas Únicas <span>✦</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div style="text-align:center">
+    <p class="section-eyebrow">Por qué elegirnos</p>
+    <h2 class="section-title" style="color:var(--cream)">La diferencia <em>Maison Dulce</em></h2>
+  </div>
+  <div class="features-grid">
+    <div class="feature-item">
+      <span class="feature-icon">🌾</span>
+      <h4>Ingredientes Premium</h4>
+      <p>Seleccionamos cacao de Tabasco, vainilla de Papantla y frutos de temporada de productores locales.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">👨‍🍳</span>
+      <h4>Maestros Pasteleros</h4>
+      <p>Nuestro equipo se formó en escuelas de repostería de París y Ciudad de México con más de 20 años de experiencia.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">🎁</span>
+      <h4>Pedidos Personalizados</h4>
+      <p>Diseñamos pasteles únicos para bodas, quinceañeras y eventos corporativos con tu visión en mente.</p>
+    </div>
+    <div class="feature-item">
+      <span class="feature-icon">🚚</span>
+      <h4>Entrega el Mismo Día</h4>
+      <p>Zona metropolitana de Guadalajara. Pedidos antes de las 2PM entregados con temperatura controlada.</p>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="menu-header">
+    <div>
+      <p class="section-eyebrow">Nuestra carta</p>
+      <h2 class="section-title">Colección <em>actual</em></h2>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active" onclick="filterProducts('todos', this)">Todos</button>
+      <button class="filter-tab" onclick="filterProducts('pasteles', this)">Pasteles</button>
+      <button class="filter-tab" onclick="filterProducts('petit', this)">Petit Fours</button>
+      <button class="filter-tab" onclick="filterProducts('tartas', this)">Tartas</button>
+      <button class="filter-tab" onclick="filterProducts('especiales', this)">Especiales</button>
+    </div>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-img-wrap">
+    <img src="https://images.unsplash.com/photo-1607478900766-efe13248b125?w=700&q=80" alt="Nuestra cocina"/>
+    <div class="about-img-accent">
+      <div class="num">12</div>
+      <p>Años de<br>experiencia</p>
+    </div>
+  </div>
+  <div>
+    <p class="section-eyebrow">Nuestra historia</p>
+    <h2 class="section-title">Nacimos del <em>amor</em><br>por los postres</h2>
+    <div class="divider"></div>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;color:var(--muted);line-height:1.8;margin-bottom:20px;">
+      En 2012, Alejandra Vega regresó de sus estudios en Lyon con una sola misión: llevar la técnica francesa a los sabores que amaba de niña. Así nació Maison Dulce, en una pequeña cocina en Providencia.
+    </p>
+    <p style="font-size:0.88rem;color:var(--muted);line-height:1.8;margin-bottom:36px;">
+      Hoy somos un equipo de 15 pasteleros apasionados que elaboran más de 200 piezas diarias, cada una con la misma dedicación y cariño del primer día. Trabajamos con productores locales de Jalisco, Tabasco y Veracruz para garantizar la frescura e identidad de cada ingrediente.
+    </p>
+    <div style="display:flex;gap:40px;margin-bottom:40px;">
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:800;color:var(--caramel)">200+</div>
+        <div style="font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Piezas diarias</div>
+      </div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:800;color:var(--caramel)">4.9★</div>
+        <div style="font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Calificación</div>
+      </div>
+      <div>
+        <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:800;color:var(--caramel)">8K+</div>
+        <div style="font-size:0.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted)">Clientes felices</div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="scrollTo({top:document.getElementById('contact').offsetTop-60,behavior:'smooth'})">Hacer un pedido</button>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <p class="section-eyebrow">Lo que dicen</p>
+  <h2 class="section-title">Reseñas de <em>clientes</em></h2>
+
+  <div class="testimonials-slider">
+    <div class="testimonials-track" id="testiTrack">
+      <div class="testimonial-slide">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"El pastel de boda que diseñaron para nosotros fue absolutamente mágico. No sólo era hermoso, era el postre más delicioso que he probado en mi vida. Todos nuestros invitados lo comentaron."</p>
+        <p class="testi-author">— Valentina R., Guadalajara</p>
+      </div>
+      <div class="testimonial-slide">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"Pedí una caja de macarons para regalar y terminé quedándome con la mitad. La textura perfecta, los sabores únicos... ya soy cliente fija. Imposible resistirse a sus creaciones."</p>
+        <p class="testi-author">— Daniela M., Zapopan</p>
+      </div>
+      <div class="testimonial-slide">
+        <div class="testi-stars">★★★★★</div>
+        <p class="testi-quote">"Para el evento corporativo de nuestra empresa, Maison Dulce superó todas las expectativas. Presentación impecable, puntualidad perfecta y un sabor que dejó a todos nuestros clientes con una sonrisa."</p>
+        <p class="testi-author">— Roberto L., Director, Empresa Tec</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="testi-nav" id="testiNav"></div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div>
+    <p class="section-eyebrow">Contacto & pedidos</p>
+    <h2 class="section-title">Hagamos algo <em>especial</em></h2>
+    <div class="divider"></div>
+    <p style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1rem;color:var(--muted);line-height:1.8;margin-bottom:32px;">
+      Para pedidos especiales o eventos, escríbenos con al menos 72 horas de anticipación. Respondemos en menos de 2 horas.
+    </p>
+    <div style="display:flex;flex-direction:column;gap:18px;">
+      <div style="display:flex;gap:14px;align-items:center">
+        <span style="font-size:1.2rem">📍</span>
+        <div>
+          <div style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--caramel);margin-bottom:2px">Ubicación</div>
+          <div style="font-size:0.9rem;color:var(--muted)">Av. Providencia 1234, Col. Providencia, Guadalajara</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center">
+        <span style="font-size:1.2rem">🕐</span>
+        <div>
+          <div style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--caramel);margin-bottom:2px">Horario</div>
+          <div style="font-size:0.9rem;color:var(--muted)">Lun–Sáb 8am–8pm · Dom 9am–3pm</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:14px;align-items:center">
+        <span style="font-size:1.2rem">📱</span>
+        <div>
+          <div style="font-size:0.7rem;letter-spacing:2px;text-transform:uppercase;color:var(--caramel);margin-bottom:2px">WhatsApp</div>
+          <div style="font-size:0.9rem;color:var(--muted)">+52 (33) 1234-5678</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div>
+    <form class="contact-form" onsubmit="handleFormSubmit(event)">
+      <div class="form-row">
+        <div class="form-field">
+          <label>Nombre</label>
+          <input type="text" placeholder="Tu nombre" required/>
+        </div>
+        <div class="form-field">
+          <label>Teléfono</label>
+          <input type="tel" placeholder="331 234 5678"/>
+        </div>
+      </div>
+      <div class="form-field">
+        <label>Correo electrónico</label>
+        <input type="email" placeholder="correo@ejemplo.com" required/>
+      </div>
+      <div class="form-field">
+        <label>Tipo de pedido</label>
+        <select>
+          <option value="">Selecciona una opción</option>
+          <option>Pastel de ocasión especial</option>
+          <option>Pedido corporativo</option>
+          <option>Entrega a domicilio</option>
+          <option>Degustación en tienda</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Mensaje / Detalles</label>
+        <textarea placeholder="Cuéntanos sobre tu pedido, fecha, número de porciones, sabores preferidos..."></textarea>
+      </div>
+      <button type="submit" class="btn-primary form-submit">Enviar solicitud →</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <h3>Maison <span>Dulce</span></h3>
+      <p>Pastelería de autor en el corazón de Guadalajara. Cada postre es una historia de sabor, técnica y amor.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Menú</h4>
+      <ul>
+        <li><a href="#">Pasteles</a></li>
+        <li><a href="#">Petit Fours</a></li>
+        <li><a href="#">Tartas</a></li>
+        <li><a href="#">Especiales</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Empresa</h4>
+      <ul>
+        <li><a href="#">Nuestra historia</a></li>
+        <li><a href="#">Equipo</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Trabaja con nosotros</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Síguenos</h4>
+      <ul>
+        <li><a href="#">Instagram</a></li>
+        <li><a href="#">Facebook</a></li>
+        <li><a href="#">TikTok</a></li>
+        <li><a href="#">Pinterest</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Maison Dulce. Todos los derechos reservados.</span>
+    <span>Hecho con 🤎 en Guadalajara, Jalisco</span>
+  </div>
+</footer>
+
+<!-- CART OVERLAY + SIDEBAR -->
+<div id="cart-overlay" onclick="toggleCart()"></div>
+<div id="cart-sidebar">
+  <div class="cart-header">
+    <h2>Tu carrito</h2>
+    <button class="cart-close" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none">
+    <div class="cart-subtotal"><span>Subtotal</span><span id="cartSubtotal">$0</span></div>
+    <div class="cart-subtotal"><span>Envío</span><span>$80</span></div>
+    <div class="cart-total"><span>Total</span><span id="cartTotal">$0</span></div>
+    <button class="btn-checkout" onclick="checkoutWhatsApp()" style="background:var(--sage);margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:10px">📱 Pedir por WhatsApp</button>
+    <button class="btn-checkout" onclick="checkoutMercadoPago()" style="display:flex;align-items:center;justify-content:center;gap:10px">💳 Pagar en línea (MercadoPago)</button>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast-notif">🍰 <span id="toast-text">Agregado al carrito</span></div>
+
+<script type="module">
+  /* ════════════════════════════════════════════════════════
+     ⚙️  CONFIGURACIÓN — edita estos valores con los tuyos
+     ════════════════════════════════════════════════════════ */
+  const CONFIG = {
+    // WhatsApp: pon tu número con código de país, sin + ni espacios
+    whatsappNumber: '3326519477',
+
+    // MercadoPago: pega aquí tu Public Key de pruebas o producción
+    // Obtenerla en: https://www.mercadopago.com.mx/developers → Credenciales
+    mercadopagoPublicKey: 'TEST-xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+
+    // Tu backend URL para crear preferencias de MP (ver instrucciones al final)
+    // Si no tienes backend aún, el botón de MP mostrará instrucciones
+    mercadopagoBackendUrl: '',   // Ej: 'https://tu-api.com/crear-pago'
+
+    // Firebase — obtén estos datos en console.firebase.google.com
+    // Si no configuras Firebase, el sitio usa el catálogo local (fallback)
+    firebase: {
+      apiKey:            'TU_API_KEY',
+      authDomain:        'tu-proyecto.firebaseapp.com',
+      projectId:         'tu-proyecto',
+      storageBucket:     'tu-proyecto.appspot.com',
+      messagingSenderId: '000000000000',
+      appId:             '1:000:web:000'
+    }
+  };
+
+  /* ════════════════════════════════════════════════════════
+     📦  CATÁLOGO LOCAL (fallback si Firebase no está listo)
+     ════════════════════════════════════════════════════════ */
+  const localProducts = [
+    { id:'p1', name:'Pastel de Chocolate Oscuro', cat:'pasteles', badge:'Favorito', price:420, stock:true, desc:'Capas de bizcocho de cacao 72%, ganache y frambuesas frescas.', img:'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80' },
+    { id:'p2', name:'Opera de Café',              cat:'pasteles', badge:'',         price:380, stock:true, desc:'Clásico francés con crema de mantequilla al café y glaseado espejo.', img:'https://images.unsplash.com/photo-1571115177098-24ec42ed204d?w=500&q=80' },
+    { id:'p3', name:'Tarta de Frutos Rojos',      cat:'tartas',   badge:'Temporada',price:290, stock:true, desc:'Base sucrée, crema de vainilla de Papantla y frutas frescas.', img:'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=500&q=80' },
+    { id:'p4', name:'Caja de Macarons (12 pzs)',  cat:'petit',    badge:'',         price:340, stock:true, desc:'12 sabores: frambuesa, pistacho, salted caramel, vainilla y más.', img:'https://images.unsplash.com/photo-1558326567-98ae2405596b?w=500&q=80' },
+    { id:'p5', name:'Cheesecake de Maracuyá',     cat:'tartas',   badge:'Nuevo',    price:310, stock:true, desc:'Base de jengibre, queso crema y coulis de maracuyá de Veracruz.', img:'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=500&q=80' },
+    { id:'p6', name:'Croissants Artesanales (6)', cat:'petit',    badge:'',         price:180, stock:false,desc:'Mantequilla AOP francesa, 72 horas de fermentación lenta.', img:'https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=500&q=80' },
+    { id:'p7', name:'Pastel Naked Floral',         cat:'especiales',badge:'Especial',price:890, stock:true, desc:'Flores comestibles y buttercream artesanal, diseño personalizado.', img:'https://images.unsplash.com/photo-1486427944299-d1955d23e34d?w=500&q=80' },
+    { id:'p8', name:'Profiteroles al Chocolate',   cat:'petit',    badge:'',         price:220, stock:true, desc:'Choux crujientes, crema chantilly y chocolate belga.', img:'https://images.unsplash.com/photo-1483695028939-5bb13f8648b0?w=500&q=80' },
+  ];
+
+  /* ════════════════════════════════════════════════════════
+     🔥  FIREBASE — carga productos desde Firestore
+     ════════════════════════════════════════════════════════ */
+  let products = localProducts;   // default
+  let firebaseReady = false;
+
+  async function initFirebase() {
+    const cfg = CONFIG.firebase;
+    if (!cfg.apiKey || cfg.apiKey === 'TU_API_KEY') {
+      console.info('Firebase no configurado → usando catálogo local.');
+      return;
+    }
+    try {
+      const { initializeApp }    = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js');
+      const { getFirestore, collection, getDocs, query, orderBy }
+                                 = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js');
+      const app = initializeApp(cfg);
+      const db  = getFirestore(app);
+      const snap = await getDocs(query(collection(db, 'productos'), orderBy('orden')));
+      if (!snap.empty) {
+        products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        firebaseReady = true;
+        console.info(`✅ ${products.length} productos cargados desde Firebase.`);
+      }
+    } catch (err) {
+      console.warn('Error Firebase, usando catálogo local:', err.message);
+    }
+    renderProducts(currentFilter);
+  }
+
+  /* ════════════════════════════════════════════════════════
+     🛒  CARRITO — persiste en localStorage
+     ════════════════════════════════════════════════════════ */
+  const CART_KEY = 'maisondulce_cart';
+
+  function loadCart() {
+    try { return JSON.parse(localStorage.getItem(CART_KEY)) || {}; }
+    catch { return {}; }
+  }
+
+  function saveCart() {
+    localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  }
+
+  let cart = loadCart();
+  let currentFilter = 'todos';
+
+  /* ---- Render catálogo ---- */
+  function renderProducts(filter = 'todos') {
+    const grid = document.getElementById('productsGrid');
+    const filtered = filter === 'todos' ? products : products.filter(p => p.cat === filter);
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--muted);font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.1rem">No hay productos en esta categoría.</div>`;
+      return;
+    }
+
+    grid.innerHTML = filtered.map(p => `
+      <div class="product-card" data-id="${p.id}">
+        ${p.badge   ? `<div class="product-badge">${p.badge}</div>` : ''}
+        ${!p.stock  ? `<div class="product-badge" style="right:16px;left:auto;background:#888">Agotado</div>` : ''}
+        <img class="product-img" src="${p.img}" alt="${p.name}" loading="lazy"/>
+        <div class="product-info">
+          <div class="product-cat">${{pasteles:'Pasteles',petit:'Petit Fours',tartas:'Tartas',especiales:'Especiales'}[p.cat]||p.cat}</div>
+          <div class="product-name">${p.name}</div>
+          <div class="product-desc">${p.desc}</div>
+          <div class="product-footer">
+            <div class="product-price"><sup>$</sup>${Number(p.price).toLocaleString()}</div>
+            <button class="btn-add" onclick="addToCart('${p.id}')" title="Agregar" ${!p.stock?'disabled style="opacity:.4;cursor:not-allowed"':''}>+</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    setTimeout(() => {
+      grid.querySelectorAll('.product-card').forEach((c, i) =>
+        setTimeout(() => c.classList.add('visible'), i * 80));
+    }, 50);
+  }
+
+  window.filterProducts = function(cat, btn) {
+    currentFilter = cat;
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderProducts(cat);
+  };
+
+  /* ---- Agregar / quitar ---- */
+  window.addToCart = function(id) {
+    const p = products.find(p => String(p.id) === String(id));
+    if (!p || !p.stock) return;
+    cart[id] = cart[id] ? { ...cart[id], qty: cart[id].qty + 1 } : { ...p, qty: 1 };
+    saveCart();
+    updateCartUI();
+    showToast(`🍰 ${p.name} agregado`);
+    bumpCount();
+  };
+
+  window.removeFromCart = function(id) {
+    delete cart[id];
+    saveCart();
+    updateCartUI();
+  };
+
+  window.changeQty = function(id, delta) {
+    if (!cart[id]) return;
+    cart[id].qty += delta;
+    if (cart[id].qty <= 0) delete cart[id];
+    saveCart();
+    updateCartUI();
+  };
+
+  function updateCartUI() {
+    const items  = Object.values(cart);
+    const count  = items.reduce((a, b) => a + b.qty, 0);
+    document.getElementById('cartCount').textContent = count;
+
+    const container = document.getElementById('cartItems');
+    const footer    = document.getElementById('cartFooter');
+
+    if (items.length === 0) {
+      container.innerHTML = `<div class="cart-empty"><div class="empty-icon">🍽️</div><p>Tu carrito está vacío.</p></div>`;
+      footer.style.display = 'none';
+      return;
+    }
+
+    container.innerHTML = items.map(item => `
+      <div class="cart-item">
+        <img src="${item.img}" alt="${item.name}"/>
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-controls">
+            <button class="qty-btn" onclick="changeQty('${item.id}', -1)">−</button>
+            <span class="qty-num">${item.qty}</span>
+            <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+          <div class="cart-item-price">$${(item.price * item.qty).toLocaleString()}</div>
+          <button class="cart-item-remove" onclick="removeFromCart('${item.id}')">✕ quitar</button>
+        </div>
+      </div>
+    `).join('');
+
+    const subtotal = items.reduce((a, b) => a + b.price * b.qty, 0);
+    document.getElementById('cartSubtotal').textContent = `$${subtotal.toLocaleString()}`;
+    document.getElementById('cartTotal').textContent    = `$${(subtotal + 80).toLocaleString()}`;
+    footer.style.display = 'block';
+  }
+
+  window.toggleCart = function() {
+    const sidebar  = document.getElementById('cart-sidebar');
+    const overlay  = document.getElementById('cart-overlay');
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('open');
+    document.body.style.overflow = sidebar.classList.contains('open') ? 'hidden' : '';
+  };
+
+  /* ════════════════════════════════════════════════════════
+     📱  WHATSAPP CHECKOUT
+     ════════════════════════════════════════════════════════ */
+  window.checkoutWhatsApp = function() {
+    const items    = Object.values(cart);
+    if (!items.length) return;
+    const subtotal = items.reduce((a,b) => a + b.price * b.qty, 0);
+    const total    = subtotal + 80;
+
+    const lineas = items.map(i =>
+      `  • ${i.qty}x ${i.name} — $${(i.price * i.qty).toLocaleString()} MXN`
+    ).join('\n');
+
+    const msg = [
+      '🍰 *Hola Maison Dulce, me gustaría hacer un pedido:*',
+      '',
+      lineas,
+      '',
+      `📦 Subtotal: $${subtotal.toLocaleString()} MXN`,
+      `🚚 Envío: $80 MXN`,
+      `💰 *Total: $${total.toLocaleString()} MXN*`,
+      '',
+      '¿Podrían confirmar disponibilidad y tiempo de entrega? ¡Gracias! 😊'
+    ].join('\n');
+
+    const url = `https://wa.me/${CONFIG.whatsappNumber}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+  };
+
+  /* ════════════════════════════════════════════════════════
+     💳  MERCADOPAGO CHECKOUT
+     ════════════════════════════════════════════════════════ */
+  window.checkoutMercadoPago = async function() {
+    const items = Object.values(cart);
+    if (!items.length) return;
+
+    // Si no hay backend configurado → mostrar instrucciones
+    if (!CONFIG.mercadopagoBackendUrl) {
+      document.getElementById('mp-modal').classList.add('open');
+      return;
+    }
+
+    showToast('⏳ Conectando con MercadoPago...');
+
+    try {
+      // 1️⃣  Tu backend crea la preferencia y devuelve el init_point
+      const res = await fetch(CONFIG.mercadopagoBackendUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map(i => ({
+            title:      i.name,
+            quantity:   i.qty,
+            unit_price: i.price,
+            currency_id:'MXN'
+          })),
+          shipments: { cost: 80 }
+        })
+      });
+
+      const data = await res.json();
+
+      if (data.init_point) {
+        // 2️⃣  Redirige a la pasarela de pago de MercadoPago
+        window.location.href = data.init_point;
+      } else {
+        throw new Error(data.message || 'Sin init_point en respuesta');
+      }
+    } catch (err) {
+      showToast('❌ Error al conectar con el servidor de pagos');
+      console.error('MercadoPago error:', err);
+    }
+  };
+
+  window.closeMPModal = function() {
+    document.getElementById('mp-modal').classList.remove('open');
+  };
+
+  /* ════════════════════════════════════════════════════════
+     🔔  TOAST / HELPERS
+     ════════════════════════════════════════════════════════ */
+  let toastTimer;
+  window.showToast = function(msg) {
+    const toast = document.getElementById('toast-notif');
+    document.getElementById('toast-text').textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+  };
+
+  function bumpCount() {
+    const el = document.getElementById('cartCount');
+    el.classList.remove('bump');
+    void el.offsetWidth;
+    el.classList.add('bump');
+  }
+
+  window.addEventListener('scroll', () =>
+    document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
+
+  /* ---- Testimonials ---- */
+  let testiIdx = 0;
+  const testiNav = document.getElementById('testiNav');
+  for (let i = 0; i < 3; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'testi-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goToSlide(i);
+    testiNav.appendChild(dot);
+  }
+  function goToSlide(idx) {
+    testiIdx = idx;
+    document.getElementById('testiTrack').style.transform = `translateX(-${idx * 100}%)`;
+    document.querySelectorAll('.testi-dot').forEach((d,i) => d.classList.toggle('active', i === idx));
+  }
+  setInterval(() => goToSlide((testiIdx + 1) % 3), 5000);
+
+  /* ---- Cursor ---- */
+  const cursorEl  = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => {
+    mx=e.clientX; my=e.clientY;
+    cursorEl.style.transform=`translate(${mx-6}px,${my-6}px)`;
+  });
+  (function animateRing(){
+    rx+=(mx-rx-18)*0.12; ry+=(my-ry-18)*0.12;
+    cursorRing.style.transform=`translate(${rx}px,${ry}px)`;
+    requestAnimationFrame(animateRing);
+  })();
+  document.querySelectorAll('button,a,input,select,textarea').forEach(el=>{
+    el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
+    el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+  });
+
+  /* ---- Form ---- */
+  window.handleFormSubmit = function(e) {
+    e.preventDefault();
+    showToast('✅ Solicitud enviada con éxito');
+    e.target.reset();
+  };
+
+  /* ════════════════════════════════════════════════════════
+     🚀  INIT
+     ════════════════════════════════════════════════════════ */
+  renderProducts();
+  updateCartUI();
+  initFirebase();
+</script>
+<!-- MERCADOPAGO MODAL -->
+<div id="mp-modal" style="display:none;position:fixed;inset:0;z-index:900;background:rgba(28,16,8,0.7);align-items:center;justify-content:center;">
+  <div style="background:var(--cream);max-width:540px;width:92vw;padding:40px;position:relative;border-top:4px solid var(--caramel)">
+    <button onclick="closeMPModal()" style="position:absolute;top:16px;right:20px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted)">✕</button>
+    <p style="font-size:.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--caramel);margin-bottom:8px">Configuración requerida</p>
+    <h3 style="font-family:Playfair Display,serif;font-size:1.4rem;color:var(--choco);margin-bottom:20px">Activar pagos con MercadoPago</h3>
+    <p style="font-size:.88rem;color:var(--muted);line-height:1.8;margin-bottom:20px">Para activar pagos reales necesitas un pequeño servidor backend. Sigue estos 3 pasos:</p>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div style="background:var(--parchment);padding:16px 18px;border-left:3px solid var(--caramel)">
+        <strong style="font-size:.8rem;letter-spacing:1px;text-transform:uppercase">Paso 1 — Cuenta MP</strong>
+        <p style="font-size:.83rem;color:var(--muted);margin-top:4px">Crea tu cuenta en <a href="https://www.mercadopago.com.mx" target="_blank" style="color:var(--caramel)">mercadopago.com.mx</a> y obtén tus credenciales de API (Access Token + Public Key).</p>
+      </div>
+      <div style="background:var(--parchment);padding:16px 18px;border-left:3px solid var(--caramel)">
+        <strong style="font-size:.8rem;letter-spacing:1px;text-transform:uppercase">Paso 2 — Backend (Node.js)</strong>
+        <p style="font-size:.83rem;color:var(--muted);margin-top:4px">Instala el SDK: <code style="background:#e8ddd0;padding:2px 6px;font-size:.8rem">npm install mercadopago express cors</code> y crea un endpoint POST /crear-pago que reciba los items y devuelva el <em>init_point</em> de la preferencia de pago.</p>
+      </div>
+      <div style="background:var(--parchment);padding:16px 18px;border-left:3px solid var(--caramel)">
+        <strong style="font-size:.8rem;letter-spacing:1px;text-transform:uppercase">Paso 3 — Configurar en este sitio</strong>
+        <p style="font-size:.83rem;color:var(--muted);margin-top:4px">Edita el objeto CONFIG al inicio del script: pon tu <code style="background:#e8ddd0;padding:2px 6px;font-size:.8rem">mercadopagoPublicKey</code> y la URL de tu servidor en <code style="background:#e8ddd0;padding:2px 6px;font-size:.8rem">mercadopagoBackendUrl</code>.</p>
+      </div>
+    </div>
+    <p style="font-size:.78rem;color:var(--muted);margin-top:20px">💡 Mientras tanto, el botón de <strong>WhatsApp ya funciona</strong> para recibir pedidos inmediatamente.</p>
+  </div>
+</div>
+<style>#mp-modal.open{display:flex!important}</style>
+</body>
+</html>
